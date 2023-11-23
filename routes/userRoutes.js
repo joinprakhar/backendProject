@@ -16,7 +16,7 @@ import {
 router.route("/register").post(registerUser);
 //.get(protect, admin, getUsers);
 router.post("/login", authUser);
-//router.post('/logout', logoutUser);
+router.post("/logout", logoutUser);
 // router.route('/profile')
 //     .get(protect, getUserProfile)
 //     .put(protect, updateUserProfile)
