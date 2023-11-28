@@ -8,6 +8,11 @@ import generateToken from "../utils/generateToken.js";
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  if (!email || !password) {
+    res.status(200).json({ message: "Necessary fields missing" });
+    throw new Error("Necessary fields missing");
+  }
+
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
     const token = generateToken(res, user._id);
@@ -19,7 +24,7 @@ const authUser = asyncHandler(async (req, res) => {
       token: token,
     });
   } else {
-    res.status(401);
+    res.status(401).json({ message: "Invalid email or password" });
     throw new Error("Invalid email or password");
   }
 });
@@ -31,8 +36,12 @@ const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   const userExists = await User.findOne({ email });
   console.log(req.body);
+  if (!name || !email || !password) {
+    res.status(200).json({ message: "Necessary fields missing" });
+    throw new Error("Necessary fields missing");
+  }
   if (userExists) {
-    res.status(400);
+    res.status(200).json({ message: "User already exists" });
     throw new Error("User already exists");
   }
   const user = await User.create({
@@ -44,7 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (user) {
     //generateToken(res, user._id);
 
-    res.status(201).json({
+    res.status(200).json({
       _id: user._id,
       name: user.name,
       email: user.email,
